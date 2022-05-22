@@ -21,9 +21,9 @@ const tabOptions = {
 function FormTab() {
 
     return (
-        <Tab.Navigator>
-            <Tab.Screen name="Form" component={Form} options={tabOptions} />
-            <Tab.Screen name="Consents" component={Consents} options={tabOptions} />
+        <Tab.Navigator screenOptions={tabOptions}>
+            <Tab.Screen name="Form" component={Form} />
+            <Tab.Screen name="Consents" component={Consents} />
         </Tab.Navigator>
     )
 }

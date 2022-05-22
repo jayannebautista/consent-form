@@ -5,14 +5,14 @@ import FormTab from "./FormTabNavigation";
 import ConsentsTab from "./ConsentTabNavigation";
 import ConsentText from "../HomePage/ConsentText";
 const Stack = createNativeStackNavigator();
-
+const stackOptions = { animation: 'none', headerShown: false };
 function HomeStack() {
     return (
         <ConsentProvider>
-            <Stack.Navigator>
-                <Stack.Screen name="FormTab" component={FormTab} options={{ headerShown: false }} />
-                <Stack.Screen name="ConsentText" component={ConsentText} options={{ headerShown: false }} />
-                <Stack.Screen name="ConsentsTab" component={ConsentsTab} options={{ headerShown: false }} />
+            <Stack.Navigator screenOptions={stackOptions}>
+                <Stack.Screen name="FormTab" component={FormTab} />
+                <Stack.Screen name="ConsentText" component={ConsentText} />
+                <Stack.Screen name="ConsentsTab" component={ConsentsTab} />
             </Stack.Navigator>
         </ConsentProvider>
     )

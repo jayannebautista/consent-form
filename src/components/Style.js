@@ -50,6 +50,14 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'row'
     },
+    consentDiv: {
+        marginVertical: 20,
+    },
+    consentText: {
+        fontSize: 20,
+        color: BLACK,
+        textAlign: 'justify'
+    }
 
 
 
