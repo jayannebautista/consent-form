@@ -132,8 +132,9 @@ function ConsentText() {
                 console.log(e)
                 return;
             });
-            await setRecording(true);
-            await setRecord(uri);
+            setRecording(true);
+            console.log(uri);
+            setRecord(uri);
         } catch (e) {
             console.error(e);
         }
