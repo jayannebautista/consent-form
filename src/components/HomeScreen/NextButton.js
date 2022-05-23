@@ -1,19 +1,13 @@
 import React from "react";
 import { TouchableOpacity, Text, View } from "react-native";
-import { useConsent } from "../ConsentContext";
+
 import { styles } from "../Style";
 import Icon from 'react-native-vector-icons/AntDesign';
-function NextButton({ onNext = f => f }) {
-
-    const { consent } = useConsent();
-
-    const checkIfDisabled = () => {
-        return consent.name.trim() === '' || consent.language.trim() === '';
-    }
+function NextButton({ onNext = f => f, title = 'Next', disabled = false }) {
     return (
-        <View style={styles.btnRight}>
-            <TouchableOpacity onPress={onNext} style={styles.btnGrey} disabled={checkIfDisabled() ? true : false}>
-                <Text style={styles.label}>Next</Text>
+        <View>
+            <TouchableOpacity onPress={onNext} style={styles.btnGrey} disabled={disabled}>
+                <Text style={styles.label}>{title}</Text>
                 <Icon name="arrowright" size={20} style={{ marginLeft: 10 }} color="#000" />
             </TouchableOpacity>
         </View>

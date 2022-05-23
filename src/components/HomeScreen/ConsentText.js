@@ -8,21 +8,24 @@ import AudioRecorderPlayer, {
     AudioSourceAndroidType,
 
 } from "react-native-audio-recorder-player";
+import { useRoute } from '@react-navigation/native';
 import RNFetchBlob from "rn-fetch-blob";
 import uuid from 'react-native-uuid';
 import Record from "./Record";
 import { useConsent } from "../ConsentContext";
 import { styles } from "../Style";
 import ActionButtons from "./ActionButtons";
+import Header from "../Header";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
-function ConsentText() {
+function ConsentText({ navigation }) {
 
     const { t } = useTranslation();
+    const route = useRoute();
     const yesValue = t("consent.yes").toLocaleLowerCase();
     const noValue = t("consent.no").toLocaleLowerCase();
-    const { consent, updateConsent } = useConsent();
+    const { consent, updateConsent, addConsent } = useConsent();
     const [recording, setRecording] = useState(false);
     const [record, setRecord] = useState(null);
     const [answer, setAnswer] = useState(null);
@@ -30,7 +33,7 @@ function ConsentText() {
     const [granted, setGranted] = useState(false);
 
     useEffect(() => {
-        //tts
+
         const checkPermission = async () => {
             if (Platform.OS === "android") {
                 const grants = await PermissionsAndroid.requestMultiple([
@@ -56,21 +59,22 @@ function ConsentText() {
         };
 
         checkPermission();
-
         Tts.speak(t("consent.speech"));
         Voice.onSpeechStart = onSpeechStart;
         Voice.onSpeechRecognized = onSpeechRecognized;
         Voice.onSpeechEnd = onSpeechEnd;
         Voice.onSpeechError = onSpeechError;
         Voice.onSpeechResults = onSpeechResults;
-
         return () => {
             Voice.destroy().then(Voice.removeAllListeners);
             Tts.stop();
-
-
         };
+
+
+
     }, []);
+
+
     const onSpeechStart = (e) => {
         console.log("onSpeechStart: ", e);
 
@@ -106,7 +110,8 @@ function ConsentText() {
             return;
         }
         else {
-            await setAnswer(null)
+            setAnswer(null)
+            updateConsent("consented", 0);
         }
 
     };
@@ -179,25 +184,35 @@ function ConsentText() {
         await Voice.cancel();
         audioRecorderPlayer.stopPlayer();
         audioRecorderPlayer.removePlayBackListener();
+        clear();
+        await updateConsent("consented", 0);
+        updateConsent("filePath", "");
+    }
+    const clear = () => {
         setRecord(null);
         setRecording(false)
         setPlay(false);
         setAnswer(null);
-        await updateConsent("consented", 0);
-        updateConsent("filePath", "");
     }
 
-    const onSaveConsent = async () => {
-        await updateConsent("filePath", record);
-        console.log(consent);
+    const onSaveConsent = () => {
+        const newConsent = { ...consent };
+        newConsent.filePath = record;
+        addConsent(newConsent).then(res => {
+            if (res) {
+                clear();
+                navigation.navigate('ThankYou')
+            }
+
+        }).catch(err => {
+
+        });
 
     }
     return (
         <View style={styles.main}>
             <View style={styles.container}>
-                <View style={styles.center}>
-                    <Text style={styles.header}>Consent Form</Text>
-                </View>
+                <Header>Consent Form</Header>
                 <View style={styles.consentDiv}>
                     <Text style={styles.consentText}>{t("consent.part1")}</Text>
 

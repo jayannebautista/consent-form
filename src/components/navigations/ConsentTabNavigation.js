@@ -21,7 +21,7 @@ const tabOptions = {
 function ConsentsTab() {
 
     return (
-        <Tab.Navigator screenOptions={tabOptions}>
+        <Tab.Navigator screenOptions={tabOptions} initialRouteName="Consents">
             <Tab.Screen name="Home" component={Form} />
             <Tab.Screen name="Consents" component={Consents} />
         </Tab.Navigator>

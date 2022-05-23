@@ -46,11 +46,13 @@ export const styles = StyleSheet.create({
     },
     btnGrey: {
         backgroundColor: GREY,
-        height: 45,
-        padding: 5,
+        height: 50,
+        padding: 15,
         alignItems: 'center',
         justifyContent: 'center',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        alignContent: 'center'
+
     },
     consentDiv: {
         marginVertical: 20,
@@ -98,5 +100,8 @@ export const styles = StyleSheet.create({
     answerText: {
         marginLeft: 10,
         fontSize: 20
-    }
+    },
+    formDiv: {
+        marginVertical: 5,
+    },
 });

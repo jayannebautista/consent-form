@@ -13,7 +13,6 @@ function ActionButtons({ retry = f => f, answer, onSaveConsent = f => f }) {
                         <Text style={styles.customBtnText}>Retry</Text>
                         <EIcon name="redo" size={30} />
                     </View>
-
                 </TouchableOpacity>
             </View>
             <View style={styles.customBtn}>
