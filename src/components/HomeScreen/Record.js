@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { styles } from "../style";
+import { styles } from "../Style";
 import { useConsent } from "../ConsentContext";
 import { useTranslation } from 'react-i18next';
 function Record({

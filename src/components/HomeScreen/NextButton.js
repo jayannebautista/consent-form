@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, Text, View } from "react-native";
 import { useConsent } from "../ConsentContext";
-import { styles } from "../style";
+import { styles } from "../Style";
 import Icon from 'react-native-vector-icons/AntDesign';
 function NextButton({ onNext = f => f }) {
 

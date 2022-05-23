@@ -2,7 +2,7 @@ import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import EIcon from "react-native-vector-icons/EvilIcons";
-import { styles } from "../style";
+import { styles } from "../Style";
 
 function ActionButtons({ retry = f => f, answer, onSaveConsent = f => f }) {
     return (

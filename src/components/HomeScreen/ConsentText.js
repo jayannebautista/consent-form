@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, PermissionsAndroid, Platform } from "react-native";
-import { useTranslation } from 'react-i18next';
-import Tts from 'react-native-tts';
+import { useTranslation } from "react-i18next";
+import Tts from "react-native-tts";
 import Voice from "@react-native-community/voice"
 import AudioRecorderPlayer, {
-    AVEncoderAudioQualityIOSType,
-    AVEncodingOption,
     AudioEncoderAndroidType,
-    AudioSet,
     AudioSourceAndroidType,
-    PlayBackType,
-    RecordBackType,
+
 } from "react-native-audio-recorder-player";
+import RNFetchBlob from "rn-fetch-blob";
+import uuid from 'react-native-uuid';
 import Record from "./Record";
 import { useConsent } from "../ConsentContext";
-import { styles } from "../style";
+import { styles } from "../Style";
 import ActionButtons from "./ActionButtons";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -34,18 +32,18 @@ function ConsentText() {
     useEffect(() => {
         //tts
         const checkPermission = async () => {
-            if (Platform.OS === 'android') {
+            if (Platform.OS === "android") {
                 const grants = await PermissionsAndroid.requestMultiple([
                     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
                     PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
                     PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
                 ]);
                 if (
-                    grants['android.permission.WRITE_EXTERNAL_STORAGE'] ===
+                    grants["android.permission.WRITE_EXTERNAL_STORAGE"] ===
                     PermissionsAndroid.RESULTS.GRANTED &&
-                    grants['android.permission.READ_EXTERNAL_STORAGE'] ===
+                    grants["android.permission.READ_EXTERNAL_STORAGE"] ===
                     PermissionsAndroid.RESULTS.GRANTED &&
-                    grants['android.permission.RECORD_AUDIO'] ===
+                    grants["android.permission.RECORD_AUDIO"] ===
                     PermissionsAndroid.RESULTS.GRANTED
                 ) {
                     setGranted(true);
@@ -74,22 +72,22 @@ function ConsentText() {
         };
     }, []);
     const onSpeechStart = (e) => {
-        console.log('onSpeechStart: ', e);
+        console.log("onSpeechStart: ", e);
 
     };
 
     const onSpeechRecognized = (e) => {
-        console.log('onSpeechRecognized: ', e);
+        console.log("onSpeechRecognized: ", e);
 
     };
 
     const onSpeechEnd = (e) => {
 
-        console.log('onSpeechEnd', e);
+        console.log("onSpeechEnd", e);
     };
 
     const onSpeechError = (e) => {
-        console.log('onSpeechError: ', e);
+        console.log("onSpeechError: ", e);
 
     };
 
@@ -99,12 +97,12 @@ function ConsentText() {
         if (value.indexOf(yesValue) > -1) {
             await setAnswer(yesValue);
 
-            updateConsent('consented', 1);
+            updateConsent("consented", 1);
             return;
         }
         else if (value.indexOf(noValue) > -1) {
             await setAnswer(noValue)
-            updateConsent('consented', 0);
+            updateConsent("consented", 0);
             return;
         }
         else {
@@ -116,25 +114,27 @@ function ConsentText() {
     const startRecording = async () => {
         try {
             await Tts.stop();
+
+            await Voice.start(consent.language);
+            const dirs = RNFetchBlob.fs.dirs;
+            const fileName = uuid.v4();
+            const path = Platform.select({
+                ios: `${fileName}.m4a`,
+                android: `${dirs.CacheDir}/${fileName}.mp3`,
+            });
             const audioSet = {
                 AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
-                AudioSourceAndroid: AudioSourceAndroidType.MIC,
-                AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
-                AVNumberOfChannelsKeyIOS: 2,
-                AVFormatIDKeyIOS: AVEncodingOption.aac,
+                AudioSourceAndroid: AudioSourceAndroidType.MIC
             };
-            await Voice.start(consent.language);
-            const uri = await audioRecorderPlayer.startRecorder(
-                undefined,
-                audioSet,
-            );
+            const uri = await audioRecorderPlayer.startRecorder(path, audioSet, false);
+
             audioRecorderPlayer.addRecordBackListener((e) => {
                 console.log(e)
                 return;
             });
             setRecording(true);
-            console.log(uri);
             setRecord(uri);
+
         } catch (e) {
             console.error(e);
         }
@@ -145,8 +145,7 @@ function ConsentText() {
             await Voice.stop();
             const result = await audioRecorderPlayer.stopRecorder();
             audioRecorderPlayer.removeRecordBackListener();
-            await setRecording(false);
-
+            setRecording(false);
         } catch (e) {
             console.log(e);
         }
@@ -154,9 +153,9 @@ function ConsentText() {
     }
     const playRecording = async () => {
         try {
-            const msg = await audioRecorderPlayer.startPlayer();
+            const msg = await audioRecorderPlayer.startPlayer(record);
             const volume = await audioRecorderPlayer.setVolume(1.0);
-            console.log(`file: ${msg}`, `volume: ${volume}`);
+
             audioRecorderPlayer.addPlayBackListener((e) => {
                 console.log(e);
             });
@@ -184,10 +183,14 @@ function ConsentText() {
         setRecording(false)
         setPlay(false);
         setAnswer(null);
+        await updateConsent("consented", 0);
+        updateConsent("filePath", "");
     }
 
-    const onSaveConsent = () => {
+    const onSaveConsent = async () => {
+        await updateConsent("filePath", record);
         console.log(consent);
+
     }
     return (
         <View style={styles.main}>

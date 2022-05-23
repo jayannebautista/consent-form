@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Tts from 'react-native-tts';
-const DEFAULT_CONSENT = { name: "", language: "", consented: 0 };
+const DEFAULT_CONSENT = { name: "", language: "", consented: 0, filePath: "" };
 export const ConsentContext = createContext();
 
 export default function ConsentProvider({ children }) {
