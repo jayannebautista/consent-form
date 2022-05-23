@@ -21,20 +21,18 @@ const audioRecorderPlayer = new AudioRecorderPlayer();
 
 function ConsentText() {
 
+    const { t } = useTranslation();
+    const yesValue = t("consent.yes").toLocaleLowerCase();
+    const noValue = t("consent.no").toLocaleLowerCase();
+    const { consent, updateConsent } = useConsent();
     const [recording, setRecording] = useState(false);
     const [record, setRecord] = useState(null);
     const [answer, setAnswer] = useState(null);
     const [play, setPlay] = useState(false);
     const [granted, setGranted] = useState(false);
-    const { t } = useTranslation();
-    const yesValue = t("consent.yes").toLocaleLowerCase();
-    const noValue = t("consent.no").toLocaleLowerCase();
-    const { consent, updateConsent } = useConsent();
-
 
     useEffect(() => {
         //tts
-
         const checkPermission = async () => {
             if (Platform.OS === 'android') {
                 const grants = await PermissionsAndroid.requestMultiple([
@@ -62,8 +60,6 @@ function ConsentText() {
         checkPermission();
 
         Tts.speak(t("consent.speech"));
-
-
         Voice.onSpeechStart = onSpeechStart;
         Voice.onSpeechRecognized = onSpeechRecognized;
         Voice.onSpeechEnd = onSpeechEnd;
@@ -73,6 +69,7 @@ function ConsentText() {
         return () => {
             Voice.destroy().then(Voice.removeAllListeners);
             Tts.stop();
+
 
         };
     }, []);
@@ -87,6 +84,7 @@ function ConsentText() {
     };
 
     const onSpeechEnd = (e) => {
+
         console.log('onSpeechEnd', e);
     };
 
@@ -95,16 +93,24 @@ function ConsentText() {
 
     };
 
-    const onSpeechResults = (e) => {
+    const onSpeechResults = async (e) => {
         const { value } = e;
+
         if (value.indexOf(yesValue) > -1) {
-            setAnswer(yesValue)
+            await setAnswer(yesValue);
+
+            updateConsent('consented', 1);
             return;
         }
-        if (value.indexOf(noValue) > -1) {
-            setAnswer(noValue)
+        else if (value.indexOf(noValue) > -1) {
+            await setAnswer(noValue)
+            updateConsent('consented', 0);
             return;
         }
+        else {
+            await setAnswer(null)
+        }
+
     };
 
     const startRecording = async () => {
@@ -117,7 +123,7 @@ function ConsentText() {
                 AVNumberOfChannelsKeyIOS: 2,
                 AVFormatIDKeyIOS: AVEncodingOption.aac,
             };
-            await Voice.start();
+            await Voice.start(consent.language);
             const uri = await audioRecorderPlayer.startRecorder(
                 undefined,
                 audioSet,
@@ -145,18 +151,42 @@ function ConsentText() {
         }
 
     }
-    const playRecording = () => {
+    const playRecording = async () => {
+        try {
+            const msg = await audioRecorderPlayer.startPlayer();
+            const volume = await audioRecorderPlayer.setVolume(1.0);
+            console.log(`file: ${msg}`, `volume: ${volume}`);
+            audioRecorderPlayer.addPlayBackListener((e) => {
+                console.log(e);
+            });
+            setPlay(true)
+
+        } catch (error) {
+
+        }
+    }
+    const stopListening = async () => {
         try {
 
+            audioRecorderPlayer.stopPlayer();
+            audioRecorderPlayer.removePlayBackListener();
+            setPlay(false)
         } catch (error) {
 
         }
     }
     const retry = async () => {
         await Voice.cancel();
+        audioRecorderPlayer.stopPlayer();
+        audioRecorderPlayer.removePlayBackListener();
+        setRecord(null);
+        setRecording(false)
+        setPlay(false);
+        setAnswer(null);
+    }
 
-        await setRecord(null);
-        await setRecording(false)
+    const onSaveConsent = () => {
+        console.log(consent);
     }
     return (
         <View style={styles.main}>
@@ -182,10 +212,13 @@ function ConsentText() {
                         playRecording={playRecording}
                         answer={answer}
                         granted={granted}
+                        play={play}
+                        stopListening={stopListening}
+
                     />
                 </View>
             </View>
-            {!recording && record && <ActionButtons retry={retry} />}
+            {!recording && record && <ActionButtons retry={retry} answer={answer} onSaveConsent={onSaveConsent} />}
         </View>
     )
 }

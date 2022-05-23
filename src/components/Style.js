@@ -88,6 +88,15 @@ export const styles = StyleSheet.create({
     customBtnText: {
         marginRight: 5,
         fontSize: 16
+    },
+    answerDiv: {
+        justifyContent: 'center',
+        flexDirection: 'row',
+        alignItems: 'center'
     }
-
+    ,
+    answerText: {
+        marginLeft: 10,
+        fontSize: 20
+    }
 });

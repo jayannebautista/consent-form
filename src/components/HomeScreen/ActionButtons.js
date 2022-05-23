@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/AntDesign";
 import EIcon from "react-native-vector-icons/EvilIcons";
 import { styles } from "../style";
 
-function ActionButtons({ retry = f => f }) {
+function ActionButtons({ retry = f => f, answer, onSaveConsent = f => f }) {
     return (
         <View style={styles.btnContainer}>
             <View style={styles.customBtn}>
@@ -17,7 +17,7 @@ function ActionButtons({ retry = f => f }) {
                 </TouchableOpacity>
             </View>
             <View style={styles.customBtn}>
-                <TouchableOpacity>
+                <TouchableOpacity disabled={!answer} onPress={onSaveConsent}>
                     <View style={styles.customBtnInner}>
                         <Text style={styles.customBtnText}>Save</Text>
                         <Icon name="arrowright" size={20} />
