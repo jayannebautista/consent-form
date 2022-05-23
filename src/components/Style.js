@@ -9,7 +9,8 @@ export const styles = StyleSheet.create({
     },
     container: {
         padding: 40,
-        marginTop: 30
+        marginTop: 30,
+        position: 'relative'
     },
     center: {
         alignItems: 'center',
@@ -17,7 +18,8 @@ export const styles = StyleSheet.create({
     header: {
         fontSize: 30,
         color: BLACK,
-        fontWeight: '500'
+        fontWeight: '500',
+        marginBottom: 20
     },
     form: {
         padding: 20
@@ -38,13 +40,13 @@ export const styles = StyleSheet.create({
         color: GREY
     },
     btnRight: {
-        width: 150,
+        width: 160,
         alignSelf: 'flex-end',
         padding: 15,
     },
     btnGrey: {
         backgroundColor: GREY,
-        height: 40,
+        height: 45,
         padding: 5,
         alignItems: 'center',
         justifyContent: 'center',
@@ -57,9 +59,35 @@ export const styles = StyleSheet.create({
         fontSize: 20,
         color: BLACK,
         textAlign: 'justify'
+    },
+    microphone: {
+        backgroundColor: GREY,
+        borderRadius: 40,
+        padding: 20
+    },
+    btnContainer: {
+        flexDirection: 'row',
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: 50,
+    },
+    customBtn: {
+        borderColor: 'grey',
+        borderWidth: 1,
+        width: '50%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    customBtnInner: {
+
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    customBtnText: {
+        marginRight: 5,
+        fontSize: 16
     }
-
-
-
 
 });

@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TextInput } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useConsent } from "../ConsentContext";
-import { styles } from "../Style";
+import { styles } from "../style";
 import NextButton from "./NextButton";
 
 function Form({ navigation }) {

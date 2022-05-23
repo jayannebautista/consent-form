@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Form from '../HomePage/Form';
-import Consents from '../ConsentsPage/Consents';
+import Form from '../HomeScreen/Form';
+import Consents from '../ConsentsScreen/Consents';
 
 const Tab = createBottomTabNavigator();
 const tabOptions = {
@@ -22,7 +22,7 @@ function ConsentsTab() {
 
     return (
         <Tab.Navigator screenOptions={tabOptions}>
-            <Tab.Screen name="Form" component={Form} />
+            <Tab.Screen name="Home" component={Form} />
             <Tab.Screen name="Consents" component={Consents} />
         </Tab.Navigator>
     )
