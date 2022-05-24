@@ -2,7 +2,6 @@ import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { styles } from "../Style";
-import { useConsent } from "../ConsentContext";
 import { useTranslation } from 'react-i18next';
 function Record({
     startRecording = f => f,
@@ -14,9 +13,11 @@ function Record({
     granted,
     play,
     stopListening = f => f,
+    processing,
+    state
 
 }) {
-    const { consent } = useConsent();
+
     const { t } = useTranslation();
     const renderMic = () => {
         return (
@@ -56,17 +57,26 @@ function Record({
         return (
             answer &&
             <Text style={styles.answerText}>
-                {`You Responded "${consent.consented ? t("consent.yes") : t("consent.no")}" `}
+                {`You Responded "${state.consented ? t("consent.yes") : t("consent.no")}" `}
             </Text>
         )
     }
+    const renderProcessing = () => {
+        return (
+            <View style={styles.answerDiv}>
+                <Text style={styles.answerText}>Processing...</Text>
 
+
+            </View>
+        )
+    }
     return (
         <View>
             {!recording && !record && granted && renderMic()}
             {recording && renderStop()}
             {!recording && record && !play && renderPlay()}
             {play && renderPause()}
+            {processing && renderProcessing()}
 
         </View>
     )

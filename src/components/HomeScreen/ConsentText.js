@@ -2,15 +2,14 @@ import React, { useEffect, useState } from "react";
 import { View, Text, PermissionsAndroid, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import Tts from "react-native-tts";
-import Voice from "@react-native-community/voice"
+import Voice from "@react-native-community/voice";
 import AudioRecorderPlayer, {
     AudioEncoderAndroidType,
-    AudioSourceAndroidType,
-
+    AudioSourceAndroidType
 } from "react-native-audio-recorder-player";
-import { useRoute } from '@react-navigation/native';
 import RNFetchBlob from "rn-fetch-blob";
 import uuid from 'react-native-uuid';
+import Toast from 'react-native-toast-message';
 import Record from "./Record";
 import { useConsent } from "../ConsentContext";
 import { styles } from "../Style";
@@ -19,18 +18,21 @@ import Header from "../Header";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
-function ConsentText({ navigation }) {
+function ConsentText({ navigation, route }) {
 
     const { t } = useTranslation();
-    const route = useRoute();
     const yesValue = t("consent.yes").toLocaleLowerCase();
     const noValue = t("consent.no").toLocaleLowerCase();
-    const { consent, updateConsent, addConsent } = useConsent();
+
+    const { consent, addConsent } = useConsent();
     const [recording, setRecording] = useState(false);
     const [record, setRecord] = useState(null);
     const [answer, setAnswer] = useState(null);
     const [play, setPlay] = useState(false);
     const [granted, setGranted] = useState(false);
+    const [processing, setProcessing] = useState(false);
+    const [state, setState] = useState(consent);
+
 
     useEffect(() => {
 
@@ -65,12 +67,12 @@ function ConsentText({ navigation }) {
         Voice.onSpeechEnd = onSpeechEnd;
         Voice.onSpeechError = onSpeechError;
         Voice.onSpeechResults = onSpeechResults;
+
         return () => {
+
             Voice.destroy().then(Voice.removeAllListeners);
             Tts.stop();
         };
-
-
 
     }, []);
 
@@ -86,41 +88,87 @@ function ConsentText({ navigation }) {
     };
 
     const onSpeechEnd = (e) => {
-
         console.log("onSpeechEnd", e);
+
     };
 
     const onSpeechError = (e) => {
-        console.log("onSpeechError: ", e);
+        const { error } = e;
+        if (error) {
+            const { message } = e || {};
+            if (message) {
+                Toast.show({
+                    type: 'info',
+                    text1: 'Message',
+                    text2: `${message}. Please try again`
+                });
+            }
+
+        }
+
 
     };
 
-    const onSpeechResults = async (e) => {
-        const { value } = e;
+    const updateSpeech = async (value) => {
 
-        if (value.indexOf(yesValue) > -1) {
-            await setAnswer(yesValue);
+        const prevState = await { ...state };
 
-            updateConsent("consented", 1);
-            return;
-        }
-        else if (value.indexOf(noValue) > -1) {
-            await setAnswer(noValue)
-            updateConsent("consented", 0);
-            return;
+        if (value) {
+            if (value.indexOf(yesValue) > -1) {
+
+                setAnswer(yesValue);
+                prevState.consented = 1;
+                setState(prevState);
+                setProcessing(false)
+
+
+            }
+            else if (value.indexOf(noValue) > -1) {
+                setAnswer(noValue)
+                prevState.consented = 0;
+
+                setState(prevState);
+                setProcessing(false)
+
+
+            }
+            else {
+                prevState.consented = 0;
+                setState(prevState);
+                setAnswer(null)
+                Toast.show({
+                    type: 'info',
+                    text1: 'Message',
+                    text2: `Please answer "${t("consent.yes")}" or "${t("consent.no")}"`
+                });
+                setProcessing(false)
+            }
+
         }
         else {
+            Toast.show({
+                type: 'info',
+                text1: 'Message',
+                text2: `Please answer "${t("consent.yes")}" or "${t("consent.no")}"`
+            });
+            prevState.consented = 0;
+            setState(prevState);
             setAnswer(null)
-            updateConsent("consented", 0);
-        }
 
+            setProcessing(false)
+
+        }
+    }
+    const onSpeechResults = (e) => {
+        const { value } = e;
+        updateSpeech(value);
     };
 
     const startRecording = async () => {
         try {
             await Tts.stop();
 
-            await Voice.start(consent.language);
+            await Voice.start(state.language);
             const dirs = RNFetchBlob.fs.dirs;
             const fileName = uuid.v4();
             const path = Platform.select({
@@ -151,6 +199,7 @@ function ConsentText({ navigation }) {
             const result = await audioRecorderPlayer.stopRecorder();
             audioRecorderPlayer.removeRecordBackListener();
             setRecording(false);
+            setProcessing(true)
         } catch (e) {
             console.log(e);
         }
@@ -180,23 +229,27 @@ function ConsentText({ navigation }) {
 
         }
     }
-    const retry = async () => {
-        await Voice.cancel();
+    const retry = () => {
+
+
+        Voice.cancel();
         audioRecorderPlayer.stopPlayer();
         audioRecorderPlayer.removePlayBackListener();
         clear();
-        await updateConsent("consented", 0);
-        updateConsent("filePath", "");
+
+
     }
     const clear = () => {
         setRecord(null);
         setRecording(false)
         setPlay(false);
         setAnswer(null);
+        setProcessing(false);
+
     }
 
     const onSaveConsent = () => {
-        const newConsent = { ...consent };
+        const newConsent = { ...state };
         newConsent.filePath = record;
         addConsent(newConsent).then(res => {
             if (res) {
@@ -233,7 +286,8 @@ function ConsentText({ navigation }) {
                         granted={granted}
                         play={play}
                         stopListening={stopListening}
-
+                        processing={processing}
+                        state={state}
                     />
                 </View>
             </View>

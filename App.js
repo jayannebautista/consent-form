@@ -1,18 +1,20 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeStack from './src/components/navigations/HomeScreen';
-const Stack = createNativeStackNavigator();
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
+import HomeStack from "./src/components/navigations/HomeScreen";
+import ConsentProvider from "./src/components/ConsentContext";
 
 function App() {
   return (
+    <>
+      <ConsentProvider>
+        <NavigationContainer>
+          <HomeStack />
+        </NavigationContainer>
 
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="HomeScreen" options={{ headerShown: false }} component={HomeStack} />
-      </Stack.Navigator>
-    </NavigationContainer>
-
+      </ConsentProvider>
+      <Toast />
+    </>
   );
 }
 

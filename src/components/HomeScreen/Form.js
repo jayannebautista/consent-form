@@ -1,16 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useConsent } from "../ConsentContext";
 import { styles } from "../Style";
 import NextButton from "./NextButton";
 import Header from "../Header";
-
 function Form({ navigation }) {
+
     const { updateConsent, consent } = useConsent();
+    const [state, setState] = useState(consent);
 
     const onNext = () => {
         navigation.navigate('ConsentText')
+    }
+    const handleChange = (key, value) => {
+        const prevState = { ...state };
+        prevState[key] = value;
+        setState(prevState);
+        updateConsent(prevState);
     }
     return (
         <View style={styles.main}>
@@ -21,9 +28,9 @@ function Form({ navigation }) {
                         <Text style={styles.label}>Name</Text>
                         <TextInput
                             placeholder="Enter your name"
-                            value={consent.name}
+                            value={state.name}
                             style={styles.textInput}
-                            onChangeText={(value) => { updateConsent("name", value) }}
+                            onChangeText={(value) => { handleChange("name", value) }}
                         />
                     </View>
                     <View style={styles.formDiv}>
@@ -32,9 +39,12 @@ function Form({ navigation }) {
                         </View>
                         <View style={styles.textInput}>
                             <Picker
-                                selectedValue={consent.language}
-                                onValueChange={(itemValue, itemIndex) =>
-                                    updateConsent("language", itemValue)
+                                selectedValue={state.language}
+                                onValueChange={(itemValue, itemIndex) => {
+                                    handleChange("language", itemValue)
+
+                                }
+
                                 }
                             >
                                 <Picker.Item style={styles.placeholder} value="" label="Select Language" enabled={false} />
@@ -46,11 +56,11 @@ function Form({ navigation }) {
 
                 </View>
                 <View style={styles.btnRight}>
-                    <NextButton onNext={onNext} disabled={consent.name.trim() === '' || consent.language.trim() === ''} />
+                    <NextButton onNext={onNext} disabled={state.name.trim() === '' || state.language.trim() === ''} />
                 </View>
 
             </View>
-        </View>
+        </View >
     )
 }
 export default Form;
