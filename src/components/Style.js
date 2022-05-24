@@ -109,7 +109,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingVertical: 10,
         alignItems: 'center',
-        paddingHorizontal: 7,
+        paddingHorizontal: 30
 
     }
 

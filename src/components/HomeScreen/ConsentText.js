@@ -34,6 +34,7 @@ function ConsentText({ navigation }) {
     const [state, setState] = useState({ ...consent });
 
 
+
     useEffect(() => {
 
         const checkPermission = async () => {
@@ -109,9 +110,9 @@ function ConsentText({ navigation }) {
 
     };
 
-    const updateSpeech = async (value) => {
+    const updateSpeech = (value) => {
 
-        const prevState = await { ...state };
+        const prevState = { ...state };
 
         if (value) {
             if (value.indexOf(yesValue) > -1) {

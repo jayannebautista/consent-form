@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, SafeAreaView, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
-import AudioRecorderPlayer, {
-    AudioEncoderAndroidType,
-    AudioSourceAndroidType
-} from "react-native-audio-recorder-player";
+import AudioRecorderPlayer from "react-native-audio-recorder-player";
 import { styles } from "../Style";
 import Header from "../Header";
 import { useConsent } from "../ConsentContext";
@@ -16,9 +13,9 @@ const LANGUAGES = {
 }
 const ListHeader = () => {
     return (
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-            <Text style={{ fontSize: 20, fontWeight: '500' }}>Details</Text>
-            <Text style={{ fontSize: 20, fontWeight: '500' }}> Consent Given</Text>
+        <View style={[styles.item, { paddingHorizontal: 40 }]}>
+            <Text style={{ fontSize: 16, fontWeight: '500', width: "70%" }}>Details</Text>
+            <Text style={{ fontSize: 16, fontWeight: '500', width: "40%" }}> Consent Given</Text>
         </View >
     )
 }
@@ -60,15 +57,15 @@ function Consents() {
         return (
             <View style={[styles.item, { backgroundColor: index % 2 == 1 ? "#FFF" : "#EEE" }]}>
                 <View style={{ width: "70%" }}>
-                    <Text style={{ fontSize: 18, fontWeight: '500' }}>{name}</Text>
-                    <Text>Language {LANGUAGES[language]}</Text>
+                    <Text style={{ fontSize: 18, fontWeight: "500" }}>{name}</Text>
+                    <Text style={{ color: "#B8B8B8" }}>Language: {LANGUAGES[language]}</Text>
                 </View>
-                <View style={{ flexDirection: "row", width: '30%', justifyContent: 'space-around', alignContent: "center" }}>
-                    <View style={{}}>
+                <View style={{ flexDirection: "row", width: '30%', justifyContent: 'space-evenly', alignContent: "center" }}>
+                    <View>
                         <Icon name={`${consented ? "check" : "close"}`} size={25} />
                     </View>
 
-                    <View style={{}}>
+                    <View>
                         {selected === index ?
                             <TouchableOpacity onPress={() => { stopListening(index) }}>
                                 <Icon name="pausecircle" size={25} />
@@ -88,12 +85,11 @@ function Consents() {
             <View style={styles.container}>
                 <Header>All Consents</Header>
             </View>
-
             <FlatList data={consentList}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
                 ListHeaderComponent={<ListHeader />}
-                style={{ paddingHorizontal: 40 }}
+
             />
 
         </SafeAreaView>
