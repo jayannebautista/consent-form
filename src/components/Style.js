@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 const BLACK = '#000000';
 const WHITE = '#FFF';
 const GREY = '#CCC';
+const LIGHTGREY = "#EEE";
 export const styles = StyleSheet.create({
     main: {
         backgroundColor: WHITE,
@@ -104,4 +105,12 @@ export const styles = StyleSheet.create({
     formDiv: {
         marginVertical: 5,
     },
+    item: {
+        flexDirection: 'row',
+        paddingVertical: 10,
+        alignItems: 'center',
+        paddingHorizontal: 7,
+
+    }
+
 });

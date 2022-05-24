@@ -2,11 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { styles } from "../Style";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import OIcon from "react-native-vector-icons/Octicons"
 import Header from "../Header";
 import NextButton from "./NextButton";
-
 
 function ThankYou({ navigation }) {
     const onNext = () => {

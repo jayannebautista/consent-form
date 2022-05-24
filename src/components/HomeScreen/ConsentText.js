@@ -18,7 +18,7 @@ import Header from "../Header";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
-function ConsentText({ navigation, route }) {
+function ConsentText({ navigation }) {
 
     const { t } = useTranslation();
     const yesValue = t("consent.yes").toLocaleLowerCase();
@@ -31,7 +31,7 @@ function ConsentText({ navigation, route }) {
     const [play, setPlay] = useState(false);
     const [granted, setGranted] = useState(false);
     const [processing, setProcessing] = useState(false);
-    const [state, setState] = useState(consent);
+    const [state, setState] = useState({ ...consent });
 
 
     useEffect(() => {
@@ -219,7 +219,7 @@ function ConsentText({ navigation, route }) {
 
         }
     }
-    const stopListening = async () => {
+    const stopListening = () => {
         try {
 
             audioRecorderPlayer.stopPlayer();

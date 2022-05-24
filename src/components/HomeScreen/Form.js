@@ -8,7 +8,7 @@ import Header from "../Header";
 function Form({ navigation }) {
 
     const { updateConsent, consent } = useConsent();
-    const [state, setState] = useState(consent);
+    const [state, setState] = useState({ ...consent });
 
     const onNext = () => {
         navigation.navigate('ConsentText')
