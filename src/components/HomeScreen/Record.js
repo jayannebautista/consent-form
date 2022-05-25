@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Text } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { styles } from "../Style";
 import { useTranslation } from 'react-i18next';
+import PropTypes from "prop-types";
 function Record({
     startRecording = f => f,
     recording,
@@ -80,5 +81,32 @@ function Record({
 
         </View>
     )
+}
+Record.propTypes = {
+
+    startRecording: PropTypes.func.isRequired,
+    recording: PropTypes.bool.isRequired,
+    record: PropTypes.string,
+    stopRecording: PropTypes.func.isRequired,
+    playRecording: PropTypes.func.isRequired,
+    answer: PropTypes.string,
+    granted: PropTypes.bool.isRequired,
+    play: PropTypes.bool.isRequired,
+    stopListening: PropTypes.func.isRequired,
+    processing: PropTypes.bool.isRequired,
+    state: PropTypes.object.isRequired,
+}
+Record.defaultProps = {
+    startRecording: () => { },
+    recording: false,
+    record: null,
+    stopRecording: () => { },
+    playRecording: () => { },
+    answer: null,
+    granted: false,
+    play: false,
+    stopListening: () => { },
+    processing: false,
+    state: {}
 }
 export default Record

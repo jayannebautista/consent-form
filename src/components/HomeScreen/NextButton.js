@@ -1,8 +1,9 @@
 import React from "react";
 import { TouchableOpacity, Text, View } from "react-native";
-
-import { styles } from "../Style";
 import Icon from 'react-native-vector-icons/AntDesign';
+import PropTypes from "prop-types";
+import { styles } from "../Style";
+
 function NextButton({ onNext = f => f, title = 'Next', disabled = false }) {
     return (
         <View>
@@ -12,5 +13,18 @@ function NextButton({ onNext = f => f, title = 'Next', disabled = false }) {
             </TouchableOpacity>
         </View>
     )
+}
+NextButton.propTypes = {
+
+    onNext: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
+    disabled: PropTypes.bool.isRequired
+
+
+}
+NextButton.defaultProps = {
+    onNext: () => { },
+    title: 'Next',
+    disabled: false
 }
 export default NextButton;

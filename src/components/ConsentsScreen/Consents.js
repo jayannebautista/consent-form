@@ -11,17 +11,19 @@ const LANGUAGES = {
     en: 'English',
     fr: 'French'
 }
-const ListHeader = () => {
-    return (
-        <View style={[styles.item, { paddingHorizontal: 40 }]}>
-            <Text style={{ fontSize: 16, fontWeight: '500', width: "70%" }}>Details</Text>
-            <Text style={{ fontSize: 16, fontWeight: '500', width: "40%" }}> Consent Given</Text>
-        </View >
-    )
-}
+
 function Consents() {
     const { consentList } = useConsent();
     const [selected, setSelected] = useState(null);
+
+    const renderHeader = () => {
+        return (
+            <View style={[styles.item, { paddingHorizontal: 40 }]}>
+                <Text style={{ fontSize: 16, fontWeight: '500', width: "70%" }}>Details</Text>
+                <Text style={{ fontSize: 16, fontWeight: '500', width: "40%" }}> Consent Given</Text>
+            </View >
+        )
+    }
 
     const playRecording = async (record, index) => {
         try {
@@ -88,7 +90,7 @@ function Consents() {
             <FlatList data={consentList}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
-                ListHeaderComponent={<ListHeader />}
+                ListHeaderComponent={renderHeader()}
 
             />
 

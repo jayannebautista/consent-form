@@ -2,7 +2,9 @@ import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import EIcon from "react-native-vector-icons/EvilIcons";
+import 'prop-types';
 import { styles } from "../Style";
+import PropTypes from 'prop-types';
 
 function ActionButtons({ retry = f => f, answer, onSaveConsent = f => f }) {
     return (
@@ -25,5 +27,16 @@ function ActionButtons({ retry = f => f, answer, onSaveConsent = f => f }) {
             </View>
         </View>
     )
+}
+ActionButtons.propTypes = {
+    retry: PropTypes.func.isRequired,
+    answer: PropTypes.string,
+    onSaveConsent: PropTypes.func.isRequired,
+
+}
+ActionButtons.defaultProps = {
+    retry: () => { },
+    answer: null,
+    onSaveConsent: () => { }
 }
 export default ActionButtons;
